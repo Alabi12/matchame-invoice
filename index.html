@@ -3,336 +3,447 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MATCHAME | Professional Sales Invoice Generator</title>
-    <!-- Tailwind CSS v3 + Google Fonts -->
+    <title>MATCHÁME LIMITED | Premium Invoice Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap');
+
         * {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
-        
-        /* Print styles - optimized for ONE page */
+
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .invoice-container {
-                box-shadow: none !important;
-                margin: 0 auto !important;
-                padding: 0.15in 0.25in !important;
-                width: 100%;
-                max-width: 100%;
-            }
-            button, .action-buttons, .no-print {
-                display: none;
-            }
-            [contenteditable="true"] {
-                border: none !important;
-                background: transparent !important;
-            }
-            .invoice-table-row {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            .text-sm {
-                font-size: 0.7rem !important;
-            }
-            .p-5, .md\\:p-6 {
-                padding: 0.4rem !important;
-            }
-            .mb-4, .pb-4 {
-                margin-bottom: 0.3rem !important;
-                padding-bottom: 0.3rem !important;
-            }
-            .mt-5 {
-                margin-top: 0.3rem !important;
-            }
-            .gap-5 {
-                gap: 0.5rem !important;
-            }
+            body { background: white; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            .invoice-container { box-shadow: none !important; margin: 0 auto !important; padding: 0.15in 0.2in !important; width: 100%; max-width: 100%; }
+            button, .action-buttons { display: none; }
+            [contenteditable="true"] { border: none !important; background: transparent !important; padding: 0 !important; }
+            .editable-field { border: none !important; }
+            .invoice-table-row { break-inside: avoid; page-break-inside: avoid; }
+            .table-header-dark { background-color: #1a4a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .table-header-dark th { color: white !important; }
+            .premium-badge, .stamp-circle { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        .editable-field { transition: all 0.1s ease; cursor: text; border-radius: 4px; padding: 0 2px; display: inline-block; }
+        .editable-field:hover { background-color: #f9fafb; }
+        [contenteditable="true"]:focus { outline: none; border-bottom: 1px solid #ca8a04; background-color: #fefce8; }
+        .logo-img { max-width: 80px; max-height: 80px; object-fit: contain; }
+        .icon-circle { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #d1d5db; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background-color: #f9fafb; }
+        .table-header-dark { background-color: #1a4a2e; }
+        .table-header-dark th { color: white; font-weight: 600; letter-spacing: 0.3px; }
+        
+        /* Premium Quality Label Badge Styles */
+        .premium-badge {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #d97706;
+            border-radius: 16px;
+            padding: 8px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+        }
+        .premium-badge-icon {
+            background: #d97706;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .premium-badge-text {
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .premium-badge-sub {
+            font-size: 9px;
+            letter-spacing: 2px;
         }
         
-        .editable-field {
-            transition: all 0.1s ease;
-            cursor: text;
-            border-radius: 6px;
+        /* Stamp Circle */
+        .stamp-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: linear-gradient(145deg, #f0fdf4, #dcfce7);
+            box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
         }
-        .editable-field:hover {
-            background-color: #f9fafb;
-        }
-        [contenteditable="true"]:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            background-color: #fef3c7;
-        }
-        .logo-preview {
-            max-height: 65px;
-            max-width: 140px;
-            object-fit: contain;
-        }
-        .brand-gradient {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .premium-badge { padding: 4px 12px; gap: 6px; }
+            .premium-badge-icon { width: 24px; height: 24px; }
+            .premium-badge-icon svg { width: 14px; height: 14px; }
+            .premium-badge-text { font-size: 10px; }
         }
     </style>
 </head>
-<body class="bg-gray-100 py-5 px-4 font-sans">
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 py-6 px-4 font-sans">
 
     <div class="max-w-5xl mx-auto">
         <!-- Header Controls (No Print) -->
-        <div class="no-print flex flex-wrap justify-between items-center gap-4 mb-5 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div class="no-print flex flex-wrap justify-between items-center gap-4 mb-5 bg-white p-4 rounded-xl shadow-md border border-gray-200">
             <div class="flex gap-3 flex-wrap">
-                <button id="printBtn" class="bg-purple-700 hover:bg-purple-800 text-white font-medium py-2 px-5 rounded-lg shadow-sm transition flex items-center gap-2">
+                <button id="printBtn" class="bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-2 px-5 rounded-lg shadow-sm transition flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                    Print / Save PDF (1 Page)
+                    Print / Save PDF
                 </button>
-                <button id="resetDemoBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-5 rounded-lg transition">Reset</button>
+                <button id="resetDemoBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-5 rounded-lg transition">Reset to Sample</button>
             </div>
-            <div class="text-sm text-gray-500">
-                💡 Click any text to edit | Tax: NHIL 2.5% | GetFund 2.5% | VAT 15%
-            </div>
+            <div class="text-sm text-gray-500">💡 Click any text to edit | Taxes: NHIL 2.5% | GetFund 2.5% | VAT 15%</div>
         </div>
 
-        <!-- INVOICE CARD - Professional MATCHAME Style -->
-        <div class="invoice-container bg-white rounded-2xl shadow-2xl overflow-hidden print-shadow-none transition-all border border-gray-100">
-            <!-- Brand Header with Logo Space -->
-            <div class="brand-gradient px-6 pt-5 pb-4 text-white flex justify-between items-center flex-wrap gap-4">
+        <!-- INVOICE CARD -->
+        <div class="invoice-container bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+
+            <!-- Header: Logo + Company + INVOICE title with Premium Badge -->
+            <div class="px-8 pt-7 pb-5 flex flex-wrap justify-between items-start gap-4 bg-gradient-to-r from-white to-emerald-50">
                 <div class="flex items-center gap-4">
-                    <!-- Professional Logo Circle Frame with IMAGE TAG - logo file from same directory -->
-                    <div class="bg-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg overflow-hidden border-2 border-white/30">
-                        <img id="companyLogoImg" src="matchame_logo.JPG" alt="MATCHAME Logo" class="logo-preview w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/8b5cf6/ffffff?text=MATCHAM%C3%89'; this.onerror=null;">
+                    <!-- Circular logo -->
+                    <div class="w-20 h-20 rounded-full border-2 border-emerald-700 flex items-center justify-center overflow-hidden bg-white shadow-md flex-shrink-0">
+                        <img id="companyLogoImg" src="matchame_logo.JPG" alt="MATCHÁME Logo" class="logo-img" onerror="this.src='https://placehold.co/80x80/1a4a2e/ffffff?text=M'; this.onerror=null;">
                     </div>
                     <div>
-                        <div contenteditable="true" class="editable-field text-2xl font-bold tracking-wide outline-none" id="companyName">MATCHAME LIMITED</div>
-                        <div contenteditable="true" class="editable-field text-purple-200 text-xs outline-none" id="companyTagline">Premium Solutions • Since 2025</div>
+                        <div contenteditable="true" class="editable-field text-3xl font-bold text-emerald-900 outline-none leading-tight" id="companyName">MATCHÁME <br>LIMITED</div> <br>
+                        <div contenteditable="true" class="editable-field text-xs text-emerald-600 tracking-widest outline-none font-medium mt-1" id="companyTagline">PREMIUM SOLUTIONS • SINCE 2025</div>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-3xl font-black tracking-wider">INVOICE</div>
-                    <div contenteditable="true" class="editable-field text-purple-200 text-sm outline-none" id="invoiceNumberLabel"># MCL-2410-001</div>
+                    <div class="text-5xl font-bold text-emerald-600 tracking-widest">INVOICE</div>
+                    <div class="h-px bg-emerald-700 my-2 w-full"></div>
+                    <div contenteditable="true" class="editable-field text-gray-600 font-mono text-sm outline-none" id="invoiceNumberLabel"># MCL-2410-001</div>
                 </div>
             </div>
-            
-            <div class="p-5 md:p-6">
-                <!-- Invoice Meta and Client Details -->
-                <div class="flex flex-col md:flex-row justify-between gap-5 border-b border-gray-200 pb-4 mb-4">
-                    <div class="flex-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Bill To</div>
-                        <div contenteditable="true" class="editable-field text-base font-bold text-gray-800 mt-1 outline-none" id="clientName">Premium Beverage Co.</div>
-                        <div contenteditable="true" class="editable-field text-gray-600 text-sm leading-relaxed outline-none" id="clientAddress">45 Industrial Road, Accra - Ghana</div>
-                        <div contenteditable="true" class="editable-field text-gray-600 text-sm mt-1 outline-none" id="clientEmail">orders@premiumbev.com</div>
+
+                <!-- Divider -->
+                <div class="h-px bg-gray-200 mb-6"></div>
+
+                <!-- Bill To & Dates -->
+                <div class="flex flex-col md:flex-row gap-6 mb-6">
+                    <!-- Bill To -->
+                    <div class="flex-1 flex items-start gap-3">
+                        <div class="icon-circle mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">BILL TO</div>
+                            <div contenteditable="true" class="editable-field text-2xl font-bold text-gray-800 outline-none" id="clientName">Premium Beverage Co.</div>
+                            <div contenteditable="true" class="editable-field text-gray-500 text-sm leading-relaxed outline-none mt-0.5" id="clientAddress">45 Industrial Road, Accra - Ghana</div>
+                            <div contenteditable="true" class="editable-field text-gray-500 text-sm outline-none mt-0.5" id="clientEmail">orders@premiumbev.com</div>
+                        </div>
                     </div>
-                    <div class="flex-1 md:text-right space-y-1">
-                        <div class="flex md:justify-end gap-4 text-sm">
-                            <span class="text-gray-500 font-medium">Invoice Date:</span>
+
+                    <!-- Vertical divider -->
+                    <div class="hidden md:block w-px bg-gray-200 self-stretch mx-2"></div>
+
+                    <!-- Dates & Currency -->
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-center gap-3 text-sm">
+                            <div class="icon-circle flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5"/>
+                                </svg>
+                            </div>
+                            <span class="text-gray-500 w-28">Invoice Date:</span>
                             <span contenteditable="true" class="editable-field font-medium text-gray-800 outline-none" id="invoiceDate">May 27, 2026</span>
                         </div>
-                        <div class="flex md:justify-end gap-4 text-sm">
-                            <span class="text-gray-500 font-medium">Due Date:</span>
-                            <span contenteditable="true" class="editable-field text-gray-800 outline-none" id="dueDate">November 10, 2026</span>
+                        <div class="flex items-center gap-3 text-sm">
+                            <div class="icon-circle flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5"/>
+                                </svg>
+                            </div>
+                            <span class="text-gray-500 w-28">Due Date:</span>
+                            <span contenteditable="true" class="editable-field text-gray-800 outline-none" id="dueDate">June 10, 2026</span>
                         </div>
-                        <div class="flex md:justify-end gap-4 text-sm">
-                            <span class="text-gray-500 font-medium">Currency:</span>
+                        <div class="flex items-center gap-3 text-sm">
+                            <div class="icon-circle flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
+                                </svg>
+                            </div>
+                            <span class="text-gray-500 w-28">Currency:</span>
                             <span contenteditable="true" class="editable-field font-medium text-gray-800 outline-none" id="currency">GHS (₵)</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Items Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm" id="invoiceTable">
+                <div class="overflow-x-auto my-4 rounded-lg overflow-hidden shadow-sm">
+                    <table class="w-full text-sm border-collapse" id="invoiceTable">
                         <thead>
-                            <tr class="border-b-2 border-purple-200 bg-purple-50">
-                                <th class="text-left py-2 px-1 w-2/5 text-purple-800">DESCRIPTION</th>
-                                <th class="text-right py-2 px-1 w-1/6 text-purple-800">QTY</th>
-                                <th class="text-right py-2 px-1 w-1/6 text-purple-800">UNIT PRICE (₵)</th>
-                                <th class="text-right py-2 px-1 w-1/6 text-purple-800">TOTAL (₵)</th>
-                                <th class="w-8"></th>
-                              </tr>
+                            <tr class="table-header-dark">
+                                <th class="text-left py-3 px-4 font-semibold tracking-wide">DESCRIPTION</th>
+                                <th class="text-right py-3 px-3 font-semibold tracking-wide w-16">QTY</th>
+                                <th class="text-right py-3 px-2 font-semibold tracking-wide w-32">UNIT PRICE (₵)</th>
+                                <th class="text-right py-3 px-4 font-semibold tracking-wide w-28">TOTAL (₵)</th>
+                                <th class="w-6"></th>
+                             </tr>
                         </thead>
                         <tbody id="invoiceItemsBody"></tbody>
-                      </table>
+                     </table>
                 </div>
-                
+
                 <!-- Add Item Button -->
-                <div class="mt-2 no-print">
-                    <button id="addItemBtn" class="text-purple-600 hover:text-purple-800 text-xs font-medium flex items-center gap-1 border border-purple-200 rounded-full px-3 py-1 bg-purple-50 transition">
+                <div class="mt-2 mb-5 no-print">
+                    <button id="addItemBtn" class="text-emerald-700 hover:text-emerald-800 text-xs font-medium flex items-center gap-1 border border-emerald-200 rounded-md px-3 py-1.5 bg-emerald-50 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                         + Add Line Item
                     </button>
                 </div>
-                
-                <!-- TAXES & TOTALS + PAYMENT SECTION -->
-                <div class="mt-5 flex flex-col md:flex-row gap-5">
-                    <!-- Payment Methods -->
-                    <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                        <div class="font-semibold text-purple-800 border-b pb-1 mb-3 text-sm">PAYMENT DETAILS</div>
-                        <div class="space-y-2 text-sm">
+
+                <!-- Payment Details + Totals -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
+                    <!-- LEFT: Payment Details -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-2 border-b border-gray-200 pb-2 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
+                            </svg>
+                            <span class="font-semibold text-emerald-700 text-sm">PAYMENT DETAILS</span>
+                        </div>
+                        <div class="space-y-2.5 text-sm">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Tendered (₵):</span>
-                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="tenderedAmount">0</span>
+                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="tenderedAmount">0.00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Cash:</span>
-                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="cashAmount">0</span>
+                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="cashAmount">0.00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Cheque:</span>
-                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="chequeAmount">0</span>
+                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="chequeAmount">0.00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Account Transfer:</span>
-                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="accountAmount">0</span>
+                                <span contenteditable="true" class="editable-field w-28 text-right border-b border-gray-300 outline-none font-mono" id="accountAmount">0.00</span>
                             </div>
                             <div class="flex justify-between items-center pt-2 border-t border-dashed border-gray-300 font-bold">
                                 <span class="text-gray-800">Change Due (₵):</span>
-                                <span id="changeDue" class="text-green-700 font-bold text-base">0.00</span>
+                                <span id="changeDue" class="text-emerald-700 font-bold text-lg">₵ 0.00</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Tax Breakdown -->
-                    <div class="flex-1 bg-white border border-gray-200 p-4 rounded-xl">
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                            <div class="text-gray-600">Subtotal (₵):</div>
-                            <div class="text-right font-mono font-medium" id="subtotalValue">0.00</div>
-                            
-                            <div class="text-gray-600">Discount (₵):</div>
-                            <div class="text-right"><span contenteditable="true" class="editable-field w-24 text-right border-b border-gray-200 outline-none inline-block" id="discountAmount">0.00</span></div>
-                            
-                            <div class="text-gray-600 font-medium">Net Total:</div>
-                            <div class="text-right font-mono font-semibold" id="netAfterDiscount">0.00</div>
-                            
-                            <div class="text-gray-600 border-t pt-1 mt-1">NHIL (2.5%):</div>
-                            <div class="text-right border-t pt-1 mt-1" id="nhilAmount">0.00</div>
-                            
-                            <div class="text-gray-600">GetFund Levy (2.5%):</div>
-                            <div class="text-right" id="getfundAmount">0.00</div>
-                            
-                            <div class="text-gray-600">VAT (15%):</div>
-                            <div class="text-right" id="vatAmount">0.00</div>
-                            
-                            <div class="font-bold text-purple-800 pt-2 mt-1 border-t border-gray-300">GRAND TOTAL (₵):</div>
-                            <div class="text-right font-bold text-purple-700 text-lg" id="grandTotal">0.00</div>
+
+                    <!-- RIGHT: Totals -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal (₵):</span>
+                                <span class="font-mono font-medium" id="subtotalValue">₵ 0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Discount (₵):</span>
+                                <span contenteditable="true" class="editable-field w-24 text-right border-b border-gray-200 outline-none font-mono" id="discountAmount">0.00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold text-gray-800 pt-1">
+                                <span>Net Total:</span>
+                                <span id="netAfterDiscount">₵ 0.00</span>
+                            </div>
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>NHIL (2.5%):</span>
+                                <span id="nhilAmount">₵ 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>GetFund Levy (2.5%):</span>
+                                <span id="getfundAmount">₵ 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>VAT (15%):</span>
+                                <span id="vatAmount">₵ 0.00</span>
+                            </div>
+                            <div class="border-t-2 border-emerald-200 my-2"></div>
+                            <div class="flex justify-between font-bold text-gray-800 text-base">
+                                <span>GRAND TOTAL (₵):</span>
+                                <span id="grandTotal" class="text-emerald-800 font-bold text-lg">₵ 0.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Notes & Bank Details -->
-                <div class="mt-5 pt-2 text-xs text-gray-500 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <div class="font-semibold text-gray-700 mb-0.5">Notes / Terms</div>
-                        <div contenteditable="true" class="editable-field text-gray-500 leading-relaxed outline-none bg-gray-50 p-2 rounded text-xs" id="paymentNotes">
-                            Thank you for choosing MATCHAME LABELS. Payment due within 14 days.
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-5 mt-4 border-t border-gray-200">
+                    <div class="flex items-start gap-3">
+                        <div class="icon-circle mt-0.5 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-emerald-700 mb-1 text-sm">NOTES / TERMS</div> <hr>
+                            <div contenteditable="true" class="editable-field text-gray-500 leading-relaxed outline-none text-xs" id="paymentNotes">
+                                Thank you for choosing MATCHÁME LABELS. Payment due within 14 days.
+                            </div>
                         </div>
                     </div>
-                    <div class="text-right md:text-left">
-                        <div class="font-semibold text-gray-700 mb-0.5">Bank Details</div>
-                        <div contenteditable="true" class="editable-field text-gray-500 outline-none text-xs" id="bankDetails">
-                            MATCHAME LABELS • Zenith Bank • Accra<br>Acc: 6012345678 | Sort: 057123
+                    <div class="flex items-start gap-3">
+                        <div class="icon-circle mt-0.5 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-emerald-700 mb-1 text-sm">BANK DETAILS</div> <hr>
+                            <div contenteditable="true" class="editable-field text-gray-500 outline-none text-xs" id="bankDetails">
+                                MATCHÁME LABELS • Zenith Bank • Accra<br>Acc: 6012345678 | Sort: 057123
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="mt-3 text-center text-[10px] text-gray-400 border-t border-gray-100 pt-3">
-                    <span contenteditable="true" class="editable-field outline-none">© 2026 MATCHAME LABELS — Tax Invoice (GRA Compliant)</span>
+
+              <!-- Footer with Stamp and Premium Quality Assurance -->
+<div class="mt-8 pt-5 border-t-2 border-emerald-200">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        
+        <!-- Left: Circular Stamp -->
+        <!-- <div class="stamp-circle flex-shrink-0 w-24 h-24">
+            <div class="w-full h-full rounded-full border-2 border-emerald-500 flex flex-col items-center justify-center text-center p-2 bg-gradient-to-br from-white to-emerald-50 shadow-md">
+                <div class="text-[8px] font-extrabold text-emerald-700 tracking-wider uppercase">PREMIUM</div>
+                <div class="text-[8px] font-extrabold text-emerald-700 tracking-wider uppercase">QUALITY</div>
+                <img src="premium.jpg" alt="Premium Logo" class="w-10 h-10 object-contain my-1">
+                <div class="text-[7px] font-semibold text-emerald-600 tracking-wide uppercase">PRECISION</div>
+                <div class="text-[7px] font-semibold text-emerald-600 tracking-wide uppercase">IN EVERY LABEL</div>
+            </div>
+        </div> -->
+
+        <!-- Center: Thank You Message -->
+        <div class="flex-1 text-center px-4">
+            <div class="font-extrabold text-emerald-800 text-lg tracking-wide">THANK YOU FOR YOUR BUSINESS!</div>
+            <div class="flex justify-center gap-2 my-2">
+                <div class="h-px bg-emerald-300 w-12"></div>
+                <div class="h-px bg-emerald-500 w-6"></div>
+                <div class="h-px bg-emerald-300 w-12"></div>
+            </div>
+            <!-- <div class="text-emerald-600 text-[11px] font-medium">Premium Quality Labels • ISO 9001:2024 Certified</div> -->
+            <div contenteditable="true" class="editable-field text-[10px] text-gray-400 outline-none mt-2 hover:text-gray-500 transition">© 2026 MATCHÁME LIMITED — Tax Invoice (GRA Compliant)</div>
+        </div>
+        
+        <!-- Right: Quality Badge -->
+        <div class="flex-shrink-0 no-print">
+            <div class="bg-gradient-to-r from-emerald-100 to-emerald-200 rounded-full px-4 py-2 border border-emerald-400 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <div class="bg-emerald-700 rounded-full w-5 h-5 flex items-center justify-center">
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">GRA Compliant</span>
+                    <div class="w-px h-4 bg-emerald-400"></div>
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Tax Invoice</span>
                 </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Decorative Bottom Line -->
+    <div class="mt-5 flex justify-center gap-1">
+        <div class="h-0.5 w-8 bg-emerald-300 rounded-full"></div>
+        <div class="h-0.5 w-12 bg-emerald-500 rounded-full"></div>
+        <div class="h-0.5 w-8 bg-emerald-300 rounded-full"></div>
+    </div>
+</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample items for MATCHAME LABELS (label products)
+        // Initialize invoice items data
         let items = [
             { desc: "Premium Wine Labels (Roll of 500)", qty: 2, price: 450.00 },
             { desc: "Custom Beer Label Design & Print", qty: 1, price: 1200.00 },
             { desc: "Water Bottle Sleeve Labels", qty: 1000, price: 0.85 }
         ];
-        
+
         const TAX_RATES = { nhil: 2.5, getfund: 2.5, vat: 15.0 };
-        
+
         function formatMoney(value) {
-            const symbol = document.getElementById('currency')?.innerText.includes('₵') ? '₵' : 'GHS ';
-            return `${symbol} ${value.toFixed(2)}`;
+            return `₵ ${value.toFixed(2)}`;
         }
-        
+
+        function parseNumericValue(element) {
+            if (!element) return 0;
+            let val = parseFloat(element.innerText.replace(/[^0-9.-]/g, ''));
+            return isNaN(val) ? 0 : val;
+        }
+
         function refreshAllCalculations() {
             let subtotal = 0;
             const rows = document.querySelectorAll('#invoiceItemsBody tr');
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const qtyEl = row.querySelector('.item-qty');
-                const priceEl = row.querySelector('.item-price');
-                let qty = parseFloat(qtyEl?.innerText || '0');
-                let price = parseFloat(priceEl?.innerText || '0');
-                if (isNaN(qty)) qty = 0;
-                if (isNaN(price)) price = 0;
-                const total = qty * price;
+            rows.forEach(row => {
+                const qtyDiv = row.querySelector('.item-qty');
+                const priceDiv = row.querySelector('.item-price');
                 const totalSpan = row.querySelector('.item-total');
+                
+                let qty = parseNumericValue(qtyDiv);
+                let price = parseNumericValue(priceDiv);
+                let total = qty * price;
+                
                 if (totalSpan) totalSpan.innerText = formatMoney(total);
                 subtotal += total;
-            }
+            });
+            
             document.getElementById('subtotalValue').innerText = formatMoney(subtotal);
             
-            let discount = parseFloat(document.getElementById('discountAmount')?.innerText.replace(/[^0-9.-]/g, '') || '0');
-            if (isNaN(discount)) discount = 0;
-            const netAfterDiscount = subtotal - discount;
+            let discount = parseNumericValue(document.getElementById('discountAmount'));
+            let netAfterDiscount = subtotal - discount;
             document.getElementById('netAfterDiscount').innerText = formatMoney(netAfterDiscount);
             
-            const nhil = netAfterDiscount * (TAX_RATES.nhil / 100);
-            const getfund = netAfterDiscount * (TAX_RATES.getfund / 100);
-            const vat = netAfterDiscount * (TAX_RATES.vat / 100);
+            let nhil = netAfterDiscount * (TAX_RATES.nhil / 100);
+            let getfund = netAfterDiscount * (TAX_RATES.getfund / 100);
+            let vat = netAfterDiscount * (TAX_RATES.vat / 100);
+            
             document.getElementById('nhilAmount').innerText = formatMoney(nhil);
             document.getElementById('getfundAmount').innerText = formatMoney(getfund);
             document.getElementById('vatAmount').innerText = formatMoney(vat);
             
-            const grandTotal = netAfterDiscount + nhil + getfund + vat;
+            let grandTotal = netAfterDiscount + nhil + getfund + vat;
             document.getElementById('grandTotal').innerText = formatMoney(grandTotal);
             
-            calculateChangeAndPayment(grandTotal);
-        }
-        
-        function calculateChangeAndPayment(grandTotal) {
-            const tendered = parseFloat(document.getElementById('tenderedAmount')?.innerText.replace(/[^0-9.-]/g, '') || '0');
-            const cash = parseFloat(document.getElementById('cashAmount')?.innerText.replace(/[^0-9.-]/g, '') || '0');
-            const cheque = parseFloat(document.getElementById('chequeAmount')?.innerText.replace(/[^0-9.-]/g, '') || '0');
-            const account = parseFloat(document.getElementById('accountAmount')?.innerText.replace(/[^0-9.-]/g, '') || '0');
+            let tendered = parseNumericValue(document.getElementById('tenderedAmount'));
+            let cash = parseNumericValue(document.getElementById('cashAmount'));
+            let cheque = parseNumericValue(document.getElementById('chequeAmount'));
+            let account = parseNumericValue(document.getElementById('accountAmount'));
             
-            let totalPaid = (isNaN(cash) ? 0 : cash) + (isNaN(cheque) ? 0 : cheque) + (isNaN(account) ? 0 : account);
-            let change = (isNaN(tendered) ? 0 : tendered) - totalPaid;
-            if (change < 0) change = 0;
+            let totalPaid = cash + cheque + account;
+            let change = Math.max(0, tendered - totalPaid);
             document.getElementById('changeDue').innerText = formatMoney(change);
         }
-        
+
         function rebuildTable() {
             const tbody = document.getElementById('invoiceItemsBody');
             tbody.innerHTML = '';
-            for (let idx = 0; idx < items.length; idx++) {
-                const item = items[idx];
+            
+            items.forEach((item, idx) => {
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-100 invoice-table-row group';
+                tr.className = 'border-b border-dashed border-gray-200 invoice-table-row hover:bg-gray-50 transition';
                 
                 const tdDesc = document.createElement('td');
-                tdDesc.className = 'py-2 px-1';
+                tdDesc.className = 'py-3 px-4';
                 const descDiv = document.createElement('div');
                 descDiv.contentEditable = 'true';
-                descDiv.className = 'editable-field outline-none px-1 text-sm';
+                descDiv.className = 'editable-field outline-none text-sm text-gray-700';
                 descDiv.innerText = item.desc;
                 descDiv.addEventListener('blur', (e) => { items[idx].desc = e.target.innerText; refreshAllCalculations(); });
                 tdDesc.appendChild(descDiv);
                 tr.appendChild(tdDesc);
                 
                 const tdQty = document.createElement('td');
-                tdQty.className = 'py-2 px-1 text-right';
+                tdQty.className = 'py-3 px-3 text-right';
                 const qtyDiv = document.createElement('div');
                 qtyDiv.contentEditable = 'true';
-                qtyDiv.className = 'editable-field inline-block w-16 text-right outline-none border-b border-dashed border-gray-200 item-qty';
+                qtyDiv.className = 'editable-field inline-block w-14 text-right outline-none border-b border-dashed border-gray-300 item-qty text-sm text-gray-700';
                 qtyDiv.innerText = item.qty;
                 qtyDiv.addEventListener('blur', (e) => {
                     let val = parseFloat(e.target.innerText);
@@ -345,10 +456,10 @@
                 tr.appendChild(tdQty);
                 
                 const tdPrice = document.createElement('td');
-                tdPrice.className = 'py-2 px-1 text-right';
+                tdPrice.className = 'py-3 px-3 text-right';
                 const priceDiv = document.createElement('div');
                 priceDiv.contentEditable = 'true';
-                priceDiv.className = 'editable-field inline-block w-24 text-right outline-none border-b border-dashed border-gray-200 item-price';
+                priceDiv.className = 'editable-field inline-block w-24 text-right outline-none border-b border-dashed border-gray-300 item-price text-sm text-gray-700';
                 priceDiv.innerText = item.price;
                 priceDiv.addEventListener('blur', (e) => {
                     let val = parseFloat(e.target.innerText);
@@ -361,61 +472,84 @@
                 tr.appendChild(tdPrice);
                 
                 const tdTotal = document.createElement('td');
-                tdTotal.className = 'py-2 px-1 text-right font-mono font-medium text-gray-700 item-total';
+                tdTotal.className = 'py-3 px-4 text-right font-mono font-medium text-gray-700 item-total';
                 tdTotal.innerText = formatMoney(item.qty * item.price);
                 tr.appendChild(tdTotal);
                 
                 const tdDel = document.createElement('td');
-                tdDel.className = 'py-2 text-center no-print';
+                tdDel.className = 'py-3 text-center no-print pr-1';
                 const delBtn = document.createElement('button');
                 delBtn.innerHTML = '✕';
-                delBtn.className = 'text-gray-400 hover:text-red-500 text-xs font-bold';
+                delBtn.className = 'text-gray-300 hover:text-red-400 text-xs font-bold transition';
                 delBtn.addEventListener('click', () => {
-                    if (items.length > 1) { items.splice(idx, 1); rebuildTable(); refreshAllCalculations(); }
-                    else alert("At least one item required.");
+                    if (items.length > 1) {
+                        items.splice(idx, 1);
+                        rebuildTable();
+                    } else {
+                        alert("At least one item is required on the invoice.");
+                    }
                 });
                 tdDel.appendChild(delBtn);
                 tr.appendChild(tdDel);
                 
                 tbody.appendChild(tr);
-            }
+            });
             refreshAllCalculations();
         }
-        
+
         function addNewItem() {
-            items.push({ desc: "New Label Product", qty: 1, price: 0 });
+            items.push({ desc: "New Product / Service", qty: 1, price: 0 });
             rebuildTable();
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#invoiceItemsBody tr');
+                if (rows.length) {
+                    const lastDesc = rows[rows.length - 1].querySelector('td:first-child div');
+                    if (lastDesc) lastDesc.focus();
+                }
+            }, 50);
         }
-        
-        function resetDemo() {
+
+        function resetToSample() {
             items = [
                 { desc: "Premium Wine Labels (Roll of 500)", qty: 2, price: 450.00 },
                 { desc: "Custom Beer Label Design & Print", qty: 1, price: 1200.00 },
                 { desc: "Water Bottle Sleeve Labels", qty: 1000, price: 0.85 }
             ];
-            document.getElementById('companyName').innerText = 'MATCHAME LABELS';
+            document.getElementById('companyName').innerHTML = 'MATCHÁME<br>LIMITED';
+            document.getElementById('companyTagline').innerText = 'PREMIUM SOLUTIONS • SINCE 2025';
             document.getElementById('clientName').innerText = 'Premium Beverage Co.';
+            document.getElementById('clientAddress').innerHTML = '45 Industrial Road, Accra - Ghana';
+            document.getElementById('clientEmail').innerText = 'orders@premiumbev.com';
+            document.getElementById('invoiceNumberLabel').innerText = '# MCL-2410-001';
+            document.getElementById('invoiceDate').innerText = 'May 27, 2026';
+            document.getElementById('dueDate').innerText = 'June 10, 2026';
             document.getElementById('discountAmount').innerText = '0.00';
-            document.getElementById('tenderedAmount').innerText = '0';
-            document.getElementById('cashAmount').innerText = '0';
-            document.getElementById('chequeAmount').innerText = '0';
-            document.getElementById('accountAmount').innerText = '0';
+            document.getElementById('tenderedAmount').innerText = '0.00';
+            document.getElementById('cashAmount').innerText = '0.00';
+            document.getElementById('chequeAmount').innerText = '0.00';
+            document.getElementById('accountAmount').innerText = '0.00';
+            document.getElementById('paymentNotes').innerHTML = 'Thank you for choosing MATCHÁME LABELS. Payment due within 14 days.';
+            document.getElementById('bankDetails').innerHTML = 'MATCHÁME LABELS • Zenith Bank • Accra<br>Acc: 6012345678 | Sort: 057123';
+            document.getElementById('currency').innerText = 'GHS (₵)';
             rebuildTable();
         }
-        
-        function bindEdits() {
-            ['discountAmount', 'tenderedAmount', 'cashAmount', 'chequeAmount', 'accountAmount'].forEach(id => {
+
+        function bindCalculationEvents() {
+            const calculationFields = ['discountAmount', 'tenderedAmount', 'cashAmount', 'chequeAmount', 'accountAmount'];
+            calculationFields.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('blur', () => refreshAllCalculations());
             });
+            const currencyEl = document.getElementById('currency');
+            if (currencyEl) currencyEl.addEventListener('blur', () => refreshAllCalculations());
         }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             rebuildTable();
-            bindEdits();
+            bindCalculationEvents();
             document.getElementById('printBtn').addEventListener('click', () => window.print());
             document.getElementById('addItemBtn').addEventListener('click', addNewItem);
-            document.getElementById('resetDemoBtn').addEventListener('click', resetDemo);
+            document.getElementById('resetDemoBtn').addEventListener('click', resetToSample);
         });
     </script>
 </body>
